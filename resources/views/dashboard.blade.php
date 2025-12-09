@@ -1,100 +1,160 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    {{-- HEADER GRADIENT ELECTREND --}}
+    <div class="relative">
+        <div class="bg-gradient-to-r from-blue-700 to-blue-500 py-14 shadow-xl">
+            <div class="max-w-7xl mx-auto px-6">
+                <h2 class="text-5xl font-extrabold text-white drop-shadow">
+                    Welcome, {{ Auth::user()->name }} 👋
+                </h2>
+                <p class="text-blue-100 text-lg mt-3">
+                    Your personalized ElecTrend control panel.
+                </p>
+            </div>
+        </div>
 
-            <!-- Welcome Card -->
-            <div class="bg-blue-50 overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900">
-                <h3 class="text-2xl font-bold mb-2 text-blue-800">Welcome, {{ Auth::user()->name }}!</h3>
-                <p class="text-blue-700">
-                    @if(Auth::user()->role === 'customer')
-                        Manage your electronics shopping efficiently. Click a feature below to get started.
+        <!-- Decorative circles -->
+        <div class="absolute top-5 right-10 w-40 h-40 bg-blue-300/20 rounded-full blur-3xl"></div>
+        <div class="absolute -top-10 left-0 w-56 h-56 bg-white/10 rounded-full blur-2xl"></div>
+    </div>
+
+
+    <div class="py-10 bg-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-10">
+
+            <!-- WELCOME BOX -->
+            <div class="bg-white/80 backdrop-blur-xl border border-blue-200 shadow-xl sm:rounded-2xl p-10">
+                <h3 class="text-3xl font-bold text-blue-900">
+                     @if(Auth::user()->role === 'customer')
+                        Your Smart Shopping Hub
                     @elseif(Auth::user()->role === 'seller')
-                        Manage your store efficiently. Click a feature below to get started.
+                        Your Store Control Center 
                     @else
-                        Manage the platform efficiently. Click a feature below to get started.
+                        Admin Control Panel
+                    @endif
+                </h3>
+
+                <p class="mt-4 text-blue-800 text-lg leading-relaxed">
+                    @if(Auth::user()->role === 'customer')
+                        Explore, Choose, and Enjoy ElecTrend Electronics.
+                    @elseif(Auth::user()->role === 'seller')
+                       Manage Your ElecTrend Store with Ease.
+                    @else
+                        Manage users and store verification.
                     @endif
                 </p>
             </div>
 
-            <!-- Feature Cards Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- FEATURES GRID -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
 
                 {{-- CUSTOMER DASHBOARD --}}
                 @if(Auth::user()->role === 'customer')
-                    <x-dashboard-card 
-                        title="Browse All Products" 
-                        color="blue" 
-                        icon="tv" 
-                        link="{{ route('products') }}">
+
+                    @component('components.dashboard-card', [
+                        'title' => 'Browse All Products',
+                        'icon'  => 'tv',
+                        'link'  => route('products')
+                    ])
                         Explore all electronics available in the store.
-                    </x-dashboard-card>
+                    @endcomponent
 
-                    <x-dashboard-card 
-                        title="Browse by Category" 
-                        color="blue" 
-                        icon="tablet-alt" 
-                        link="{{ route('product.category', 1) }}">
+                    @component('components.dashboard-card', [
+                        'title' => 'Browse by Category',
+                        'icon'  => 'layer-group',
+                        'link'  => route('product.category', 1)
+                    ])
                         Filter electronics by category.
-                    </x-dashboard-card>
+                    @endcomponent
 
-                    <x-dashboard-card 
-                        title="Checkout" 
-                        color="blue" 
-                        icon="credit-card" 
-                        link="{{ route('cart.index') }}">
+                    @component('components.dashboard-card', [
+                        'title' => 'Check Out',
+                        'icon'  => 'shopping-cart',
+                        'link'  => route('cart.index')
+                    ])
                         Complete your purchase for selected products.
-                    </x-dashboard-card>
+                    @endcomponent
 
-                    <x-dashboard-card 
-                        title="Transaction History" 
-                        color="blue" 
-                        icon="receipt" 
-                        link="{{ route('transaction.history') }}">
-                        View your past purchases and details.
-                    </x-dashboard-card>
+                    @component('components.dashboard-card', [
+                        'title' => 'Transaction History',
+                        'icon'  => 'receipt',
+                        'link'  => route('transaction.history')
+                    ])
+                        View your previous purchases.
+                    @endcomponent
+
                 @endif
+
 
                 {{-- SELLER DASHBOARD --}}
                 @if(Auth::user()->role === 'seller')
-                    <x-dashboard-card title="Store Profile" color="blue" icon="store" link="{{ route('seller.store') }}">
+
+                    @component('components.dashboard-card', [
+                        'title' => 'Store Profile',
+                        'icon'  => 'store',
+                        'link'  => route('seller.store')
+                    ])
                         Create or manage your store profile.
-                    </x-dashboard-card>
+                    @endcomponent
 
-                    <x-dashboard-card title="Order Management" color="blue" icon="shopping-basket" link="{{ route('seller.orders') }}">
-                        View and update incoming orders.
-                    </x-dashboard-card>
+                    @component('components.dashboard-card', [
+                        'title' => 'Order Management',
+                        'icon'  => 'box',
+                        'link'  => route('seller.orders')
+                    ])
+                        View and process customer orders.
+                    @endcomponent
 
-                    <x-dashboard-card title="Balance & Withdraw" color="blue" icon="wallet" link="{{ route('seller.balance') }}">
-                        Check your balance and request withdrawals.
-                    </x-dashboard-card>
+                    @component('components.dashboard-card', [
+                        'title' => 'Balance & Withdraw',
+                        'icon'  => 'wallet',
+                        'link'  => route('seller.balance')
+                    ])
+                        Check earnings and request withdrawals.
+                    @endcomponent
 
-                    <x-dashboard-card title="Manage Products" color="blue" icon="tv" link="{{ route('products.index') }}">
+                    @component('components.dashboard-card', [
+                        'title' => 'Manage Products',
+                        'icon'  => 'tags',
+                        'link'  => route('products.index')
+                    ])
                         Add, update, or delete products.
-                    </x-dashboard-card>
+                    @endcomponent
 
-                    <x-dashboard-card title="Manage Categories" color="blue" icon="tags" link="{{ route('categories.index') }}">
-                        Organize your products into categories.
-                    </x-dashboard-card>
+                    @component('components.dashboard-card', [
+                        'title' => 'Manage Categories',
+                        'icon'  => 'folder-tree',
+                        'link'  => route('categories.index')
+                    ])
+                        Organize products into categories.
+                    @endcomponent
+
                 @endif
+
 
                 {{-- ADMIN DASHBOARD --}}
                 @if(Auth::user()->role === 'admin')
-                    <x-dashboard-card title="Store Verification" color="blue" icon="check-circle" link="{{ route('admin.stores') }}">
-                        Verify or reject store applications.
-                    </x-dashboard-card>
 
-                    <x-dashboard-card title="User & Store Management" color="blue" icon="users-cog" link="{{ route('admin.users') }}">
-                        Manage all users and store profiles.
-                    </x-dashboard-card>
+                    @component('components.dashboard-card', [
+                        'title' => 'Store Verification',
+                        'icon'  => 'check-circle',
+                        'link'  => route('admin.stores')
+                    ])
+                        Verify or reject seller store applications.
+                    @endcomponent
+
+                    @component('components.dashboard-card', [
+                        'title' => 'User & Store Management',
+                        'icon'  => 'users-cog',
+                        'link'  => route('admin.users')
+                    ])
+                        Manage users and store data.
+                    @endcomponent
+
                 @endif
 
             </div>
         </div>
     </div>
+
 </x-app-layout>

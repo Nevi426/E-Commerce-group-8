@@ -1,26 +1,48 @@
-@props(['title', 'color' => 'blue', 'icon' => '', 'link' => '#'])
+@props(['title', 'icon', 'link', 'color' => 'blue'])
 
-<a href="{{ $link }}" class="block">
-    <div class="shadow-sm sm:rounded-lg p-6 transition-colors
-        @if($color === 'blue') bg-blue-50 hover:bg-blue-100 text-blue-800 @endif
-        @if($color === 'green') bg-green-50 hover:bg-green-100 text-green-800 @endif
-        @if($color === 'red') bg-red-50 hover:bg-red-100 text-red-800 @endif
-        ">
-        <div class="flex items-center space-x-4">
-            @if($icon)
-                <div class="
-                    @if($color === 'blue') text-blue-500 @endif
-                    @if($color === 'green') text-green-500 @endif
-                    @if($color === 'red') text-red-500 @endif
-                    text-3xl
-                ">
-                    <i class="fas fa-{{ $icon }}"></i>
-                </div>
-            @endif
-            <div>
-                <h3 class="font-bold text-xl mb-1">{{ $title }}</h3>
-                <p class="text-sm">{{ $slot }}</p>
+<a href="{{ $link }}" class="block group">
+    <div class="
+        bg-white 
+        shadow-md 
+        rounded-2xl 
+        border border-gray-200 
+        p-6 
+        transition-all 
+        duration-300 
+        hover:-translate-y-1 
+        hover:shadow-2xl 
+        hover:border-{{ $color }}-500
+        cursor-pointer
+    ">
+
+        <div class="flex items-start gap-4">
+
+            <!-- Icon -->
+            <div class="
+                p-4 
+                bg-{{ $color }}-100 
+                text-{{ $color }}-600 
+                rounded-xl 
+                transition-all 
+                duration-300
+                group-hover:bg-{{ $color }}-600
+                group-hover:text-white
+            ">
+                <i class="fas fa-{{ $icon }} text-3xl"></i>
             </div>
+
+            <!-- Text Content -->
+            <div class="flex-1">
+                <h3 class="text-xl font-bold text-gray-800 group-hover:text-{{ $color }}-700 transition">
+                    {{ $title }}
+                </h3>
+
+                <p class="text-gray-600 mt-2 leading-relaxed">
+                    {{ $slot }}
+                </p>
+            </div>
+
         </div>
+
     </div>
 </a>
