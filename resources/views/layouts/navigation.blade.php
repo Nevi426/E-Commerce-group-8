@@ -1,100 +1,104 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
+<nav class="w-full bg-white shadow-md px-6 py-4 flex justify-between items-center">
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
-            </div>
+    {{-- LEFT: LOGO --}}
+    <a href="/" class="flex items-center space-x-2">
+        <img src="https://i.pinimg.com/1200x/3a/fb/c7/3afbc774b594137b62c78e05ed5e6ba1.jpg" 
+             class="w-16 h-16" alt="logo">
+        <span class="text-2xl font-bold text-blue-600">ElecTrend</span>
+    </a>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+    {{-- MIDDLE NAVIGATION --}}
+    <ul class="flex gap-6 text-gray-700 font-medium">
 
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
+        {{-- ===================== CUSTOMER ===================== --}}
+        @auth
+            @if(Auth::user()->role === 'customer')
+                <li><a href="{{ route('products') }}" class="hover:text-blue-600">All Products</a></li>
+                <li><a href="/products/category/1" class="hover:text-blue-600">By Category</a></li>
+                <li><a href="{{ route('transaction.history') }}" class="hover:text-blue-600">Transaction History</a></li>
+                <li><a href="{{ route('cart.index') }}" class="hover:text-blue-600">My Cart</a></li>
+            @endif
 
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
+            {{-- ===================== SELLER ===================== --}}
+            @if(Auth::user()->role === 'seller')
+                <li><a href="{{ route('seller.store') }}" class="hover:text-blue-600">Store Profile</a></li>
+                <li><a href="/seller/products" class="hover:text-blue-600">Manage Products</a></li>
+                <li><a href="{{ route('seller.orders') }}" class="hover:text-blue-600">Orders</a></li>
+                <li><a href="{{ route('seller.balance') }}" class="hover:text-blue-600">Balance</a></li>
+                <li><a href="{{ route('seller.withdraw') }}" class="hover:text-blue-600">Withdrawal</a></li>
+            @endif
 
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
+            {{-- ===================== ADMIN ===================== --}}
+            @if(Auth::user()->role === 'admin')
+                <li><a href="{{ route('admin.stores') }}" class="hover:text-blue-600">Store Verification</a></li>
+                <li><a href="{{ route('admin.users') }}" class="hover:text-blue-600">User Management</a></li>
+            @endif
+        @endauth
 
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
+    </ul>
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    {{-- RIGHT: USER DROPDOWN --}}
+    <div class="flex items-center space-x-6">
+
+        @auth
+            <div class="relative">
+                <button onclick="toggleDropdown()" 
+                    class="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium">
+                    <span>{{ Auth::user()->name }}</span>
+
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" 
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" 
+                            d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
+
+                {{-- FIX: Dropdown tidak melorot --}}
+                <div id="userDropdown"
+                    class="hidden absolute right-0 top-full mt-2 bg-white border rounded-md shadow-lg w-40 py-2 z-50">
+
+                    <a href="/profile"
+                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" 
+                            class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            Logout
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
+        @endauth
+
+        @guest
+            <a href="/login" class="nav-item">Login</a>
+            <a href="/register" class="nav-item">Register</a>
+        @endguest
+
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
-    </div>
 </nav>
+
+<style>
+    .nav-item {
+        @apply text-gray-700 hover:text-blue-600 font-medium;
+    }
+</style>
+
+<script>
+    function toggleDropdown() {
+        let menu = document.getElementById('userDropdown');
+        menu.classList.toggle('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function(e) {
+        let dropdown = document.getElementById('userDropdown');
+        let button = event.target.closest('button');
+
+        if (!dropdown.contains(e.target) && !button) {
+            dropdown.classList.add('hidden');
+        }
+    });
+</script>

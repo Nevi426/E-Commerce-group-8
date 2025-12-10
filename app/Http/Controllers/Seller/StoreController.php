@@ -11,93 +11,83 @@ class StoreController extends Controller
 {
     public function index()
     {
-        $store = Auth::user()->store;
+        $store = Store::where('user_id', auth()->id())->first();
         return view('seller.store.index', compact('store'));
-    }
-
-    public function create()
-    {
-        if (Auth::user()->store) {
-            return redirect()->route('seller.store')->with('error', 'You already have a store.');
-        }
-
-        return view('seller.store.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'logo' => 'image|max:2048',
-            'about' => 'required',
-            'phone' => 'required',
-            'address_id' => 'required',
-            'city' => 'required',
-            'address' => 'required',
-            'postal_code' => 'required'
+            'name'          => 'required|string',
+            'logo'          => 'nullable|image|max:2048',
+            'about'         => 'required|string',
+            'phone'         => 'required|string',
+            'address_id'    => 'required|string',
+            'city'          => 'required|string',
+            'address'       => 'required|string',
+            'postal_code'   => 'required|string',
         ]);
 
-        $logoName = null;
-        if ($request->has('logo')) {
-            $logoName = time() . '-' . $request->logo->getClientOriginalName();
-            $request->logo->move(public_path('uploads/stores'), $logoName);
+        $logoPath = null;
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('store_logos', 'public');
         }
 
         Store::create([
-            'user_id' => Auth::id(),
-            'name' => $request->name,
-            'logo' => $logoName,
-            'about' => $request->about,
-            'phone' => $request->phone,
-            'address_id' => $request->address_id,
-            'city' => $request->city,
-            'address' => $request->address,
-            'postal_code' => $request->postal_code,
-            'is_verified' => false,
+            'user_id'       => auth()->id(),
+            'name'          => $request->name,
+            'logo'          => $logoPath,
+            'about'         => $request->about,
+            'phone'         => $request->phone,
+            'address_id'    => $request->address_id,
+            'city'          => $request->city,
+            'address'       => $request->address,
+            'postal_code'   => $request->postal_code,
+            'is_verified'   => false,
         ]);
 
-        return redirect()->route('seller.store')->with('success', 'Store created! Waiting for admin verification.');
+        return redirect()->route('seller.store')->with('success', 'Store created successfully');
     }
 
-    public function edit()
+    public function update(Request $request, $id)
     {
-        $store = Auth::user()->store;
-        return view('seller.store.edit', compact('store'));
-    }
-
-    public function update(Request $request)
-    {
-        $store = Auth::user()->store;
-
         $request->validate([
-            'name' => 'required',
-            'about' => 'required',
-            'phone' => 'required',
-            'address_id' => 'required',
-            'city' => 'required',
-            'address' => 'required',
-            'postal_code' => 'required'
+            'name'          => 'required|string',
+            'logo'          => 'nullable|image|max:2048',
+            'about'         => 'required|string',
+            'phone'         => 'required|string',
+            'address_id'    => 'required|string',
+            'city'          => 'required|string',
+            'address'       => 'required|string',
+            'postal_code'   => 'required|string',
         ]);
 
-        if ($request->has('logo')) {
-            $fileName = time() . '-' . $request->logo->getClientOriginalName();
-            $request->logo->move(public_path('uploads/stores'), $fileName);
+        $store = Store::findOrFail($id);
 
-            @unlink(public_path('uploads/stores/' . $store->logo));
-
-            $store->logo = $fileName;
+        $logoPath = $store->logo;
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('store_logos', 'public');
         }
 
         $store->update([
-            'name' => $request->name,
-            'about' => $request->about,
-            'phone' => $request->phone,
-            'address_id' => $request->address_id,
-            'city' => $request->city,
-            'address' => $request->address,
-            'postal_code' => $request->postal_code,
+            'name'          => $request->name,
+            'logo'          => $logoPath,
+            'about'         => $request->about,
+            'phone'         => $request->phone,
+            'address_id'    => $request->address_id,
+            'city'          => $request->city,
+            'address'       => $request->address,
+            'postal_code'   => $request->postal_code,
         ]);
 
-        return redirect()->route('seller.store')->with('success', 'Store updated successfully!');
+        return redirect()->route('seller.store')->with('success', 'Store updated successfully');
+    }
+
+    public function destroy($id)
+    {
+        $store = Store::findOrFail($id);
+        $store->delete();
+
+        return redirect()->route('seller.store')->with('success', 'Store deleted');
     }
 }
