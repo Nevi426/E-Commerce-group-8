@@ -14,26 +14,26 @@
     </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-900 text-gray-100">
 
     <div class="flex">
 
         {{-- SIDEBAR --}}
-        <aside class="w-64 h-screen bg-blue-700 text-white fixed left-0 top-0 shadow-xl">
+        <aside class="w-64 h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800 text-gray-100 fixed left 0 top-0 shadow-xl">
 
-            <div class="p-6 border-b border-blue-500">
-                <h1 class="text-2xl font-bold tracking-wide">ElecTrend Admin</h1>
+            <div class="p-6 border-b border-gray-700">
+                <h1 class="text-2xl font-bold tracking-wide text-white">ElecTrend Admin</h1>
             </div>
 
             <nav class="p-4 space-y-2">
 
                 <a href="{{ route('admin.stores') }}" 
-                   class="block p-3 rounded-lg hover:bg-blue-600 transition">
+                   class="block p-3 rounded-lg text-sm font-medium text-gray-200 hover:text-blue-300 hover:bg-gray-800 transition">
                     🏪 Store Verification
                 </a>
 
                 <a href="{{ route('admin.users') }}" 
-                   class="block p-3 rounded-lg hover:bg-blue-600 transition">
+                   class="block p-3 rounded-lg text-sm font-medium text-gray-200 hover:text-blue-300 hover:bg-gray-800 transition">
                     👥 User Management
                 </a>
 
@@ -44,7 +44,7 @@
         {{-- MAIN CONTENT --}}
         <main class="ml-64 p-10 w-full">
 
-            <h2 class="text-3xl font-bold text-blue-700 mb-6">@yield('title')</h2>
+            <h2 class="text-3xl font-bold text-white mb-6">@yield('title')</h2>
 
             <div>
                 @yield('content')

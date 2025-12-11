@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\ProductCategory;
+use Illuminate\Support\Str;
 
 class ProductCategorySeeder extends Seeder
 {
@@ -20,15 +21,17 @@ class ProductCategorySeeder extends Seeder
             'Speaker',
         ];
 
-        foreach ($categories as $name) {
-            ProductCategory::create([
-                'name' => $name,
-                'slug' => \Str::slug($name),
-                'tagline' => null,
-                'description' => null,
-                'parent_id' => null,
-                'image' => null,
-            ]);
+        foreach ($categories as $category) {
+            ProductCategory::firstOrCreate(
+                ['name' => $category],
+                [
+                    'slug' => Str::slug($category),
+                    'parent_id' => null,
+                    'image' => 'default.png', // bisa pakai placeholder
+                    'tagline' => 'Kategori ' . $category,
+                    'description' => 'No description', // wajib diisi
+                ]
+            );
         }
     }
 }

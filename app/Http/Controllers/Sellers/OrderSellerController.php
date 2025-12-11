@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Sellers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +13,7 @@ class OrderSellerController extends Controller
     {
         $store = Auth::user()->store;
 
-        $orders = Order::where('store_id', $store->id)
+        $orders = Transaction::where('store_id', $store->id)
             ->with('customer')
             ->latest()
             ->get();
